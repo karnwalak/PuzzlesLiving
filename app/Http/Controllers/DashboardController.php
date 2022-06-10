@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Contact;
 use App\Models\Testimonial;
-use App\Models\MainTopBanner;
+use App\Models\Banner;
 use Validator;
 class DashboardController extends Controller
 {
@@ -51,7 +51,7 @@ class DashboardController extends Controller
     }
     public function banner()
     {
-        return view('banner')->with('banner', MainTopBanner::get());
+        return view('banner')->with('banner', Banner::get());
     }
     public function addmainbanner(Request $request){
         $validator = Validator::make($request->all(), [
@@ -66,7 +66,7 @@ class DashboardController extends Controller
             $image_name = time().'.'.$image->getClientOriginalExtension();
             $destinationPath = 'images/main_top_banner';
             $image->move($destinationPath, $image_name);
-            $banner = new MainTopBanner;
+            $banner = new Banner;
             $banner->type = $request->type;
             $banner->banner = $image_name;
             $banner->link = url('/').'/'.$destinationPath.'/'.$image_name;
@@ -79,7 +79,7 @@ class DashboardController extends Controller
         }
     }
     public function deletemainbanner(Request $request){
-        $banner = MainTopBanner::find($request->id);
+        $banner = Banner::find($request->id);
         if($banner->delete()){
             return response()->json(['status'=>'success','message'=>'Banner Deleted Successfully!']);
         }else{
