@@ -26,7 +26,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/enquiries', [DashboardController::class, 'enquiries']);
     Route::get('/callbacksrequested', [DashboardController::class, 'callbacksrequested']);
     Route::get('/accomodations', [DashboardController::class, 'accomodations']);
-    
-    
+    Route::post('/addaboutpage', [DashboardController::class, 'addaboutpage']);
+    Route::get('/addaccomodation', [DashboardController::class, 'addaccomodation']);
+    Route::post('/postAccomodation', [DashboardController::class, 'postAccomodation']);
+    Route::post('/deleteaccomodation', [DashboardController::class, 'deleteaccomodation']);
+    Route::get('/editaccomodation/{id}', [DashboardController::class, 'editaccomodation']);
+    Route::post('/updateAccomodation', [DashboardController::class, 'updateAccomodation']);
 });
     

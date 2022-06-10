@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Contact;
+use App\Models\Accomodation;
+use App\Models\About;
 use App\Models\Testimonial;
 use App\Models\Banner;
 use Validator;
@@ -18,7 +20,26 @@ class DashboardController extends Controller
     }
     public function about()
     {
-        return view('about_page');
+        return view('about_page')->with('data',About::get());
+    }
+    public function addaboutpage(Request $request){
+        $validator = Validator::make($request->all(), [
+            'description' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status'=>'error','errors'=>$validator->errors()]);
+        }
+        if($request->pid == ''){
+            $data = new About;
+        }else{
+            $data = About::find($request->pid);
+        }
+        $data->description = $request->description;
+        if($data->save()){
+            return response()->json(['status'=>'success','message'=>'About page content added successfully!']);
+        }else{
+            return response()->json(['status'=>'error','message'=>'Something went wrong']);
+        }
     }
     public function contact()
     {
@@ -65,13 +86,13 @@ class DashboardController extends Controller
             $image = $request->file('banner');
             $image_name = time().'.'.$image->getClientOriginalExtension();
             $destinationPath = 'images/main_top_banner';
-            $image->move($destinationPath, $image_name);
             $banner = new Banner;
             $banner->type = $request->type;
             $banner->banner = $image_name;
             $banner->link = url('/').'/'.$destinationPath.'/'.$image_name;
             $banner->position = $request->position;
             if($banner->save()){
+                $image->move($destinationPath, $image_name);
                 return response()->json(['status'=>'success','message'=>'Banner Added Successfully!']);
             }else{
                 return response()->json(['status'=>'error','error'=>'Something went wrong!']);
@@ -110,13 +131,13 @@ class DashboardController extends Controller
             $image = $request->file('image');
             $image_name = time().'.'.$image->getClientOriginalExtension();
             $destinationPath = 'images/testimonials';
-            $image->move($destinationPath, $image_name);
             $testimonial->link = url('/').'/'.$destinationPath.'/'.$image_name;
             $testimonial->image = $image_name;
             $testimonial->name = $request->name;
             $testimonial->description = $request->description;
             $testimonial->title = $request->title;
             if($testimonial->save()){
+                $image->move($destinationPath, $image_name);
                 return response()->json(['status'=>'success','message'=>'Testimonial Added Successfully!']);
             }else{
                 return response()->json(['status'=>'error','error'=>'Something went wrong!']);
@@ -152,7 +173,6 @@ class DashboardController extends Controller
             if(isset($image)){
                 $image_name = time().'.'.$image->getClientOriginalExtension();
                 $destinationPath = 'images/testimonials';
-                $image->move($destinationPath, $image_name);
                 $testimonial->link = url('/').'/'.$destinationPath.'/'.$image_name;
                 $testimonial->image = $image_name;
             }
@@ -160,6 +180,7 @@ class DashboardController extends Controller
             $testimonial->description = $request->description;
             $testimonial->title = $request->title;
             if($testimonial->save()){
+                $image->move($destinationPath, $image_name);
                 return response()->json(['status'=>'success','message'=>'Testimonial Updated Successfully!']);
             }else{
                 return response()->json(['status'=>'error','error'=>'Something went wrong!']);
@@ -176,6 +197,94 @@ class DashboardController extends Controller
     }
 
     public function accomodations(){
-        return view('accomodation');
+        return view('accomodation')->with('accomodations', Accomodation::get());
+    }
+
+    public function addaccomodation(Request $request){
+       return view('addaccomodation');
+    }
+
+    public function postAccomodation(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'address' => 'required',
+            'distance' => 'required',
+            'rent' => 'required',
+            'description' => 'required',
+            'image' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status'=>'error', 'errors'=>$validator->errors()]);
+        }else{
+            $res = new Accomodation;
+            $image = $request->file('image');
+            $image_name = time().'.'.$image->getClientOriginalExtension();
+            $destinationPath = 'images/accomodations';
+            $res->name = $request->name;
+            $res->address = $request->address;
+            $res->distance = $request->distance;
+            $res->rent = $request->rent;
+            $res->description = $request->description;
+            $res->image = $image_name;
+            $res->features = implode(',',$request->feature);
+            $res->link = url('/').'/'.$destinationPath.'/'.$image_name;
+            if($res->save()){
+                $image->move($destinationPath, $image_name);
+                return response()->json(['status'=>'success','message'=>'Accomodation Added Successfully!']);
+            }else{
+                return response()->json(['status'=>'error','error'=>'Something went wrong!']);
+            }
+        }
+    }
+
+    public function deleteaccomodation(Request $request){
+        $accomodation = Accomodation::find($request->id);
+        if($accomodation->delete()){
+            return response()->json(['status'=>'success','message'=>'Accomodation Deleted Successfully!']);
+        }else{
+            return response()->json(['status'=>'error','error'=>'Something went wrong!']);
+        }
+    }
+
+    public function editaccomodation($id){
+        $accomodation = Accomodation::find($id);
+        return view('editaccomodation')->with('data', $accomodation);
+    }
+
+    public function updateAccomodation(Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'address' => 'required',
+            'distance' => 'required',
+            'rent' => 'required',
+            'description' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status'=>'error', 'errors'=>$validator->errors()]);
+        }else{
+            $res = Accomodation::find($request->pid);
+            $image = $request->file('image');
+            if(isset($image)){
+                $image_name = time().'.'.$image->getClientOriginalExtension();
+                $destinationPath = 'images/accomodations';
+                $res->link = url('/').'/'.$destinationPath.'/'.$image_name;
+                $res->image = $image_name;
+                $image->move($destinationPath, $image_name);
+            }
+            $res->name = $request->name;
+            $res->address = $request->address;
+            $res->distance = $request->distance;
+            $res->rent = $request->rent;
+            $res->description = $request->description;
+            $res->features = implode(',',$request->feature);
+            if($res->save()){
+                return response()->json(['status'=>'success','message'=>'Accomodation Updated Successfully!']);
+            }else{
+                return response()->json(['status'=>'error','error'=>'Something went wrong!']);
+            }
+        }
     }
 }
