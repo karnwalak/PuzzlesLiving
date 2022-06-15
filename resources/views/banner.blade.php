@@ -198,7 +198,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Image</label>
-                                    <input type="file" class="form-control" name="banner">
+                                    <input type="file" class="form-control" name="banner[]" multiple>
                                     <span class="text-danger field_error" id="banner_error"></span>
                                 </div>
                             </div>

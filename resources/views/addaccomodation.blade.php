@@ -112,10 +112,31 @@
                                                         <span class="text-danger field_error" id="name_error"></span>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12">
+                                                <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="exampleInputEmail1">Image</label>
-                                                        <input type="file" class="form-control" name="image">
+                                                        <label for="exampleInputEmail1">Image1</label>
+                                                        <input type="file" class="form-control" name="image[]" multiple>
+                                                        <span class="text-danger field_error" id="image_error"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Image2</label>
+                                                        <input type="file" class="form-control" name="image[]" multiple>
+                                                        <span class="text-danger field_error" id="image_error"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Image3</label>
+                                                        <input type="file" class="form-control" name="image[]" multiple>
+                                                        <span class="text-danger field_error" id="image_error"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Image4</label>
+                                                        <input type="file" class="form-control" name="image[]" multiple>
                                                         <span class="text-danger field_error" id="image_error"></span>
                                                     </div>
                                                 </div>

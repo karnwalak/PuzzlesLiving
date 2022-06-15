@@ -129,7 +129,6 @@
                                                                 <th>#</th>
                                                                 <th>Name</th>
                                                                 <th>Address</th>
-                                                                <th>Images</th>
                                                                 <th>Description</th>
                                                                 <th>Rent</th>
                                                                 <th>Distance</th>
@@ -144,8 +143,6 @@
                                                                     <th>{{ $i++ }}</th>
                                                                     <td>{{ $accomodation->name }}</td>
                                                                     <td>{{ $accomodation->address }}</td>
-                                                                    <td><img src="{{ $accomodation->link }}"
-                                                                            height="100px" width="100px"></td>
                                                                     <td>{{ strip_tags($accomodation->description) }}
                                                                     </td>
                                                                     <td>Rs. {{ $accomodation->rent }}</td>

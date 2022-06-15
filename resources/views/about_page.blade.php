@@ -101,9 +101,13 @@
                                       @csrf
                                         <div class="page-body">
                                             <div class="row">
-                                                <input type="hidden" name="pid" value="{{$data[0]->id}}">
-                                                <textarea rows="10" id="editor1" name="description">{{$data[0]->description}}</textarea>
+                                                <input type="hidden" name="pid" value="{{isset($data[0]->id) ? $data[0]->id : ''}}">
+                                                <h4>About Us</h4>
+                                                <textarea rows="10" id="editor1" name="description">{{isset($data[0]->id) ? $data[0]->description : ''}}</textarea>
                                                 <span class="text-danger" id="description_error"></span>
+                                                <h4>Why Us</h4>
+                                                <textarea rows="10" id="editor2" name="why_us">{{isset($data[0]->id) ? $data[0]->why_us : ''}}</textarea>
+                                                <span class="text-danger" id="why_us_error"></span>
                                                 <span class="text-danger" id="error_msg"></span>
                                                 <span class="text-success" id="success_msg"></span>
                                                 <div class="col-md-12 d-flex justify-content-end p-0 py-4">
@@ -155,6 +159,7 @@
     </script>
     <script>
       CKEDITOR.replace('editor1');
+      CKEDITOR.replace('editor2');
     </script>
 </body>
 

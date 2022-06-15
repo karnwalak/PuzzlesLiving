@@ -16,8 +16,6 @@ return new class extends Migration
         Schema::create('accomodations', function (Blueprint $table) {
             $table->id();
             $table->string('name')->length(50);
-            $table->string('image');
-            $table->string('link');
             $table->string('address');
             $table->double('rent');
             $table->string('distance')->length(50);

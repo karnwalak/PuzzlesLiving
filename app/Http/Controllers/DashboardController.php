@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Contact;
 use App\Models\Accomodation;
+use App\Models\AccomadationImage;
 use App\Models\About;
 use App\Models\Testimonial;
 use App\Models\Banner;
@@ -25,6 +26,7 @@ class DashboardController extends Controller
     public function addaboutpage(Request $request){
         $validator = Validator::make($request->all(), [
             'description' => 'required',
+            'why_us' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['status'=>'error','errors'=>$validator->errors()]);
@@ -35,6 +37,7 @@ class DashboardController extends Controller
             $data = About::find($request->pid);
         }
         $data->description = $request->description;
+        $data->why_us = $request->why_us;
         if($data->save()){
             return response()->json(['status'=>'success','message'=>'About page content added successfully!']);
         }else{
@@ -75,6 +78,7 @@ class DashboardController extends Controller
         return view('banner')->with('banner', Banner::get());
     }
     public function addmainbanner(Request $request){
+        // return $request->banner;
         $validator = Validator::make($request->all(), [
             'type' => 'required|not_in:0',
             'banner' => 'required',
@@ -206,6 +210,8 @@ class DashboardController extends Controller
 
     public function postAccomodation(Request $request)
     {
+        // return $request;
+        
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'address' => 'required',
@@ -219,19 +225,30 @@ class DashboardController extends Controller
             return response()->json(['status'=>'error', 'errors'=>$validator->errors()]);
         }else{
             $res = new Accomodation;
-            $image = $request->file('image');
-            $image_name = time().'.'.$image->getClientOriginalExtension();
-            $destinationPath = 'images/accomodations';
             $res->name = $request->name;
             $res->address = $request->address;
             $res->distance = $request->distance;
             $res->rent = $request->rent;
             $res->description = $request->description;
-            $res->image = $image_name;
             $res->features = implode(',',$request->feature);
-            $res->link = url('/').'/'.$destinationPath.'/'.$image_name;
+           
             if($res->save()){
-                $image->move($destinationPath, $image_name);
+                $mid = Accomodation::max('id');
+                if($request->hasfile('image'))
+                {
+                    foreach($request->file('image') as $key => $file)
+                    {
+                        $img_save = new AccomadationImage;
+                        $destinationPath = 'images/accomodations';
+                        $name =  $key.'-'.time().'.'.$file->getClientOriginalExtension();
+                        $img_save->accomadation_id = $mid;
+                        $img_save->image = $name;
+                        $img_save->link = url('/').'/'.$destinationPath.'/'.$name;
+                        if($img_save->save()){
+                            $file->move($destinationPath, $name);
+                        }
+                    }
+                }
                 return response()->json(['status'=>'success','message'=>'Accomodation Added Successfully!']);
             }else{
                 return response()->json(['status'=>'error','error'=>'Something went wrong!']);
@@ -249,11 +266,13 @@ class DashboardController extends Controller
     }
 
     public function editaccomodation($id){
-        $accomodation = Accomodation::find($id);
+        $accomodation = Accomodation::with('image')->find($id);
+        // return $accomodation->image;
         return view('editaccomodation')->with('data', $accomodation);
     }
 
     public function updateAccomodation(Request $request){
+        
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'address' => 'required',
@@ -266,14 +285,7 @@ class DashboardController extends Controller
             return response()->json(['status'=>'error', 'errors'=>$validator->errors()]);
         }else{
             $res = Accomodation::find($request->pid);
-            $image = $request->file('image');
-            if(isset($image)){
-                $image_name = time().'.'.$image->getClientOriginalExtension();
-                $destinationPath = 'images/accomodations';
-                $res->link = url('/').'/'.$destinationPath.'/'.$image_name;
-                $res->image = $image_name;
-                $image->move($destinationPath, $image_name);
-            }
+            $img = AccomadationImage::where('accomadation_id', $request->pid)->get();
             $res->name = $request->name;
             $res->address = $request->address;
             $res->distance = $request->distance;
@@ -281,6 +293,22 @@ class DashboardController extends Controller
             $res->description = $request->description;
             $res->features = implode(',',$request->feature);
             if($res->save()){
+                if(isset($request->image)){
+                    foreach($img as $key => $value){
+                        foreach($request->image as $kk => $file){
+                            if($key == $kk){
+                                $img_save = AccomadationImage::find($value->id);
+                                $destinationPath = 'images/accomodations';
+                                $name =  $kk.'-'.time().'.'.$file->getClientOriginalExtension();
+                                $img_save->image = $name;
+                                $img_save->link = url('/').'/'.$destinationPath.'/'.$name;
+                                if($img_save->save()){
+                                    $file->move($destinationPath, $name);
+                                }
+                            }
+                        }
+                    }
+                }
                 return response()->json(['status'=>'success','message'=>'Accomodation Updated Successfully!']);
             }else{
                 return response()->json(['status'=>'error','error'=>'Something went wrong!']);

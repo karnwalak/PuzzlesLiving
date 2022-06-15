@@ -115,13 +115,19 @@
                                                         <span class="text-danger field_error" id="name_error"></span>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12">
+                                                @php $i=1; @endphp
+                                                @foreach($data->image as $image)
+                                                <div class="col-md-3">
+                                                    <label for="exampleInputEmail1">Image{{$i}}</label>
                                                     <div class="form-group">
-                                                        <label for="exampleInputEmail1">Image</label>
-                                                        <input type="file" class="form-control" name="image">
+                                                        <img src="{{$image->link}}" alt="Not Found!"
+                                                            style="width:100px;height:100px;">
+                                                        <input type="file" class="form-control" name="image[]" multiple>
                                                         <span class="text-danger field_error" id="image_error"></span>
                                                     </div>
                                                 </div>
+                                                @php $i++; @endphp
+                                                @endforeach
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="exampleInputEmail1">Address</label>
