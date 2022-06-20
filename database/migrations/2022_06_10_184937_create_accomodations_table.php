@@ -19,7 +19,9 @@ return new class extends Migration
             $table->string('address');
             $table->double('rent');
             $table->string('distance')->length(50);
-            $table->string('features');
+            $table->text('location')->nullable();
+            $table->string('type')->length(50);
+            $table->double('avg_rating')->length(20)->default(0);
             $table->text('description');
             $table->timestamps();
         });
@@ -32,6 +34,8 @@ return new class extends Migration
      */
     public function down()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('accomodations');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 };
