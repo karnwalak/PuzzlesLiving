@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Puzzles Admin</title>
+    <title>Demo Admin</title>
     @include('headtags')
 </head>
 
@@ -198,7 +198,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Image</label>
-                                    <input type="file" class="form-control" name="banner[]" multiple>
+                                    <input type="file" class="form-control" name="banner">
                                     <span class="text-danger field_error" id="banner_error"></span>
                                 </div>
                             </div>
